@@ -1,17 +1,17 @@
-#Proxmox Mesh Node Setup
+# Proxmox Mesh Node Setup
 
 A quick guide to getting aredn running as a virtual machine on the x86 hypervisor, Proxmox. 
 This may be handy for hosting a tunnel capable of more users than a router. 
-This guide is a work in progress, and makes the assumption that your proxmox server is on your non-aredn internal network using one adapter.
+This guide is a **work in progress**, and makes the assumption that your proxmox server is on your non-aredn internal network using one adapter.
 
-##Preparations
+## Preparations
 Click the name of the host in your datacenter you will be putting your vm on
 Expand the **System** section if needed and click **Networking**
 Double click the **Linux bridge** device that your machine will use (Usually **vmbr0** by default on a machine with one network card)
 Enable the **VLAN aware** checkbox and click **Ok**
 Reboot your proxmox host
 
-##Creation
+## Creation
 Click **Create VM**
 General tab: set a machine name
 OS tab: select **Do not use any media** and leave the guest as **Linux** version **6.x - 2.6 Kernel**
@@ -22,7 +22,7 @@ Memory tab: set between 64mb (bare minimum) and 1024mb (max recommended)
 Network tab: likely defaults, vmbr0, leave VLAN tag blank (aredn vm handles these internally)
 Confirm tab: leave **Start after created** unchecked, take note the vmid for later, and click **Finish**
 
-##Aredn installation
+## Aredn installation
 SSH to your proxmox host
 
 Download the latest x86-64-generic-ext4-combined.img.gz with wget, at the time of writing:
@@ -40,7 +40,7 @@ qm disk import 113 aredn-3.23.12.0-x86-64-generic-ext4-combined.img local-lvm
 Back in the web interface, open the hardware section of your aredn vm, double click the unassigned disk, and click **Add**
 In the **Options** section, double click **Boot order** and place a check on scsi0 and click **Ok**
 
-##Initial configuration
+## Initial configuration
 Start the VM and click **Console**
 Once the VM has finished booting, press Enter to drop to a shell
 Set the ip address to something in your lan's subnet, in my case:
@@ -49,7 +49,7 @@ ifconfig br-lan 192.168.15.80
 ```
 In your browser, go to that address (http://192.168.15.80) and complete the initial node setup
 
-##VLAN setup
+## VLAN setup
 Once the node has rebooted, you likely need to change the vlan tagging so the wan gets an address from your internet router and the aredn lan is tagged so it doesn't interfere with your home lan
 From the proxmox Console, Edit /etc/config/network in the "Lan configuration" section change ":u" to ":t" and in the "WAN configuration" change ":t" to ":u", save, exit, then
 ```
